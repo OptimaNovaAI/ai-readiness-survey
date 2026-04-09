@@ -83,13 +83,15 @@
 <body>
 
 <!-- ═══════════════════════════════════════════ -->
-<!-- CONFIG: Change these for each client       -->
+<!-- CONFIG: Reads from URL params or defaults  -->
+<!-- Usage: ?client=Academy+of+Hope&id=aoh      -->
+<!-- No params = defaults to BVC Agency          -->
 <!-- ═══════════════════════════════════════════ -->
 <script>
+const urlParams = new URLSearchParams(window.location.search);
 const CONFIG = {
-    clientName: "BVC Agency",
-    clientId: "bvc-agency",
-    // Paste your Google Apps Script web app URL here:
+    clientName: urlParams.get("client") || "BVC Agency",
+    clientId: urlParams.get("id") || "bvc-agency",
     webhookUrl: "https://script.google.com/macros/s/AKfycbzmFsgrSx468L-iVaFDw36TDHSO5g6_1SQbc8hH131ks6GOxfTYinRcKQ1lDOIdOQs/exec"
 };
 </script>
