@@ -297,12 +297,33 @@ async function submitSurvey() {
 
     if (CONFIG.webhookUrl) {
         try {
-            await fetch(CONFIG.webhookUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-                mode: "no-cors"
+            // Use hidden iframe + form POST (reliable method for Google Apps Script)
+            var iframe = document.createElement("iframe");
+            iframe.name = "survey_submit_frame";
+            iframe.style.display = "none";
+            document.body.appendChild(iframe);
+
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = CONFIG.webhookUrl;
+            form.target = "survey_submit_frame";
+
+            Object.keys(payload).forEach(function(key) {
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = payload[key] || "";
+                form.appendChild(input);
             });
+
+            document.body.appendChild(form);
+            form.submit();
+
+            // Clean up after a short delay
+            setTimeout(function() {
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+            }, 3000);
         } catch (e) {
             console.log("Submission attempted:", e);
         }
